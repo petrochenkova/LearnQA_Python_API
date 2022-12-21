@@ -11,20 +11,10 @@ from lib.base_case import BaseCase
 
 class TestUserRegister(BaseCase):
     def setup(self):
-        base_part = "lernqa"
-        domain = "example.com"
-        random_part = datetime.now().strftime("%m%d%Y%H%M%S")
-        self.email = f"{base_part}{random_part}@{domain}"
         self.url = "https://playground.learnqa.ru/api/user/"
 
     def test_create_user_successfully(self):
-        data = {
-            'password': '123',
-            'username': 'lernqa',
-            'firstName': 'lernqa',
-            'lastName': 'lernqa',
-            'email': self.email
-        }
+        data = self.prepare_reg_data()
         response = requests.post(self.url, data=data)
 
         Assertions.assert_code_status(response, 200)
@@ -32,13 +22,7 @@ class TestUserRegister(BaseCase):
 
     def test_create_user_with_existing_email(self):
         email = 'vinkotov@example.com'
-        data = {
-            'password': '123',
-            'username': 'lernqa',
-            'firstName': 'lernqa',
-            'lastName': 'lernqa',
-            'email': email
-        }
+        data = self.prepare_reg_data(email)
         response = requests.post(self.url, data=data)
         Assertions.assert_code_status(response, 400)
         # decode тк ответ приходит с "b'" - не закодирован
@@ -47,13 +31,8 @@ class TestUserRegister(BaseCase):
 
     def test_create_user_with_uncorrect_email(self):
         email = 'vinkotovexample.com'
-        data = {
-            'password': '123',
-            'username': 'lernqa',
-            'firstName': 'lernqa',
-            'lastName': 'lernqa',
-            'email': email
-        }
+        data = self.prepare_reg_data(email)
+
         response = requests.post(self.url, data=data)
         Assertions.assert_code_status(response, 400)
         assert response.content.decode("UTF-8") == "Invalid email format"
