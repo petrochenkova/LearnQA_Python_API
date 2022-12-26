@@ -2,6 +2,7 @@ import random
 import string
 from datetime import datetime
 
+import allure
 import pytest
 
 from lib.assertions import Assertions
@@ -9,10 +10,14 @@ from lib.base_case import BaseCase
 from lib.my_requests import MyRequests
 
 
+@allure.epic("Registration tests")
+@allure.feature("Registration")
 class TestUserRegister(BaseCase):
     def setup(self):
         self.url = "/user/"
 
+    @allure.title("Successful register user")
+    @allure.description("This test successfully register user by prepare data")
     def test_create_user_successfully(self):
         data = self.prepare_reg_data()
         response = MyRequests.post(self.url, data=data)
@@ -20,6 +25,8 @@ class TestUserRegister(BaseCase):
         Assertions.assert_code_status(response, 200)
         Assertions.assert_json_has_key(response, "id")
 
+    @allure.title("Unsuccessful register user with existing email")
+    @allure.description("This test doesn't register user with existing email")
     def test_create_user_with_existing_email(self):
         email = 'vinkotov@example.com'
         data = self.prepare_reg_data(email)
@@ -29,6 +36,8 @@ class TestUserRegister(BaseCase):
         assert response.content.decode(
             "UTF-8") == f"Users with email '{email}' already exists", f"Unexpected response content {response.content}"
 
+    @allure.title("Unsuccessful register user with email without '@'")
+    @allure.description("This test doesn't register user with email without '@'")
     def test_create_user_with_uncorrect_email(self):
         email = 'vinkotovexample.com'
         data = self.prepare_reg_data(email)
@@ -61,6 +70,8 @@ class TestUserRegister(BaseCase):
          'lastName': 'lernqa'}
     ]
 
+    @allure.title("Unsuccessful register user with missed param")
+    @allure.description("This test doesn't register user with missed param")
     @pytest.mark.parametrize('data', data)
     def test_create_user_without_one_field(self, data):
         response = MyRequests.post(self.url, data=data)
@@ -76,6 +87,8 @@ class TestUserRegister(BaseCase):
         elif "email" not in data:
             assert response.content.decode("UTF-8") == "The following required params are missed: email"
 
+    @allure.title("Unsuccessful register user with too short name")
+    @allure.description("This test doesn't register user with too short name")
     def test_create_user_with_short_name(self):
         random_part = datetime.now().strftime("%m%d%Y%H%M%S")
         data = {
@@ -89,6 +102,8 @@ class TestUserRegister(BaseCase):
         Assertions.assert_code_status(response, 400)
         assert response.content.decode("UTF-8") == "The value of 'username' field is too short"
 
+    @allure.title("Unsuccessful register user too long name")
+    @allure.description("This test doesn't register user with too long name")
     def test_create_user_with_long_name(self):
         letters = string.ascii_lowercase
         name = ''.join(random.choice(letters) for i in range(251))

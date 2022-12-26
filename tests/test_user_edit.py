@@ -1,15 +1,21 @@
 from datetime import datetime
 
+import allure
+
 from lib.assertions import Assertions
 from lib.base_case import BaseCase
 from lib.my_requests import MyRequests
 
 
+@allure.epic("Edition Tests")
+@allure.feature("Edition")
 class TestUserEdit(BaseCase):
     def setup(self):
         self.register_url = "/user/"
         self.login_url = "/user/login"
 
+    @allure.title("Successful edit just created user")
+    @allure.description("This test successfully edit user after creation")
     def test_edit_just_created_user(self):
         # REGISTER
         register_data = self.prepare_reg_data()
@@ -43,6 +49,8 @@ class TestUserEdit(BaseCase):
         response4 = MyRequests.get(edit_url, headers={"x-csrf-token": token}, cookies={"auth_sid": auth_sid})
         Assertions.assert_json_value_by_name(response4, "firstName", new_name, "Wrong name of the user after edit")
 
+    @allure.title("Unsuccessful edit user without authorization")
+    @allure.description("This test doesn't edit user without authorization")
     def test_edit_without_auth(self):
         # REGISTER
         register_data = self.prepare_reg_data()
@@ -66,6 +74,8 @@ class TestUserEdit(BaseCase):
         response3 = MyRequests.get(edit_url)
         Assertions.assert_json_value_by_name(response3, "username", first_name, "Wrong name of the user after edit")
 
+    @allure.title("Unsuccessful edit user with authorization as different user")
+    @allure.description("This test doesn't edit user with authorization as different user")
     def test_edit_just_created_user_as_another_user(self):
         # REGISTER 1
         register_data = self.prepare_reg_data()
@@ -108,6 +118,8 @@ class TestUserEdit(BaseCase):
         response4 = MyRequests.get(edit_url, headers={"x-csrf-token": token}, cookies={"auth_sid": auth_sid})
         Assertions.assert_json_value_by_name(response4, "username", first_name, "Wrong name of the user after edit")
 
+    @allure.title("Unsuccessful edit user email to email without '@'")
+    @allure.description("This test doesn't edit user email to email without '@'")
     def test_edit_just_created_user_with_wrong_email(self):
         # REGISTER
         register_data = self.prepare_reg_data()
@@ -143,6 +155,8 @@ class TestUserEdit(BaseCase):
         response4 = MyRequests.get(edit_url, headers={"x-csrf-token": token}, cookies={"auth_sid": auth_sid})
         Assertions.assert_json_value_by_name(response4, "email", email, "Wrong email of the user after edit")
 
+    @allure.title("Unsuccessful edit user name to too short name")
+    @allure.description("This test doesn't edit user name to too short name")
     def test_edit_just_created_user_with_short_name(self):
         # REGISTER
         register_data = self.prepare_reg_data()

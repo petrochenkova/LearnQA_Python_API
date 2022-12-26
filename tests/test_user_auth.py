@@ -1,3 +1,4 @@
+import allure
 import pytest
 
 from lib.assertions import Assertions
@@ -5,6 +6,8 @@ from lib.base_case import BaseCase
 from lib.my_requests import MyRequests
 
 
+@allure.epic("Authorization tests")
+@allure.epic("Authorization")
 class TestUserAuth(BaseCase):
     # Переменная "Список" хранит внутри себя кортежи. Кортежи состоят из парамметров для запуска тестов.
     exclude_params = [
@@ -24,6 +27,8 @@ class TestUserAuth(BaseCase):
         self.token = self.get_header(response1, "x-csrf-token")
         self.user_id_from_auth_method = self.get_json_value(response1, "user_id")
 
+    @allure.title("Test user successful authorize")
+    @allure.description("This test successfully authorize user by email and password")
     def test_auth_user(self):
         response2 = MyRequests.get("/user/auth", headers={"x-csrf-token": self.token},
                                    cookies={"auth_sid": self.auth_sid})
@@ -32,6 +37,8 @@ class TestUserAuth(BaseCase):
                                              "User id from auth method is not equal to user id from check method")
 
     # Первое - имя переменной, в которую pytest будет передавать данные. Второе - переменная, в которой эти данные сейчас хранятся
+    @allure.title("Test user unsuccessful authorization status w/o sending auth cookie or token)")
+    @allure.description("This test checks authorization status w/o sending auth cookie or token")
     @pytest.mark.parametrize('condition', exclude_params)
     def test_negative_auth_check(self, condition):
         if condition == "no_cookie":

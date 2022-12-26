@@ -1,10 +1,16 @@
+import allure
+
 from lib.assertions import Assertions
 from lib.base_case import BaseCase
 from lib.my_requests import MyRequests
 
 
+@allure.epic("Get user info tests")
+@allure.feature("Get user info")
 class TestUserGet(BaseCase):
 
+    @allure.title("Get user details without authorization")
+    @allure.description("This test get only username without authorization")
     def test_get_user_details_not_auth(self):
         url = "/user/2"
         response = MyRequests.get(url)
@@ -14,6 +20,8 @@ class TestUserGet(BaseCase):
         Assertions.assert_json_has_not_key(response, "firstName")
         Assertions.assert_json_has_not_key(response, "lastName")
 
+    @allure.title("Get user details with authorization")
+    @allure.description("This test get all fields with authorization")
     def test_get_user_details_auth_as_same_user(self):
         data = {
             "email": "vinkotov@example.com",
@@ -33,6 +41,8 @@ class TestUserGet(BaseCase):
         expected_fields = ["username", "email", "firstName", "lastName"]
         Assertions.assert_json_has_keys(response2, expected_fields)
 
+    @allure.title("Get user details with authorization as different user")
+    @allure.description("This test get only username with authorization as different user")
     def test_get_user_details_auth_as_another_user(self):
         data = {
             "email": "vinkotov@example.com",

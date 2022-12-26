@@ -1,9 +1,16 @@
+import allure
+
 from lib.assertions import Assertions
 from lib.base_case import BaseCase
 from lib.my_requests import MyRequests
 
 
+@allure.epic("Deleting tests")
+@allure.feature("Deleting")
 class TestUserDelete(BaseCase):
+    @allure.title("Unsuccessful deleting user with id 2")
+    @allure.story("Delete user with id=2")
+    @allure.description("This test doesn't delete user with id=2")
     def test_delete_user_with_id_2(self):
         base_url = "/user/2"
         login_url = "/user/login"
@@ -28,6 +35,8 @@ class TestUserDelete(BaseCase):
         assert response3.content.decode(
             "UTF-8") == '{"id":"2","username":"Vitaliy","email":"vinkotov@example.com","firstName":"Vitalii","lastName":"Kotov"}'
 
+    @allure.title("Successful deleting just create user")
+    @allure.description("This test successfully delete just create user")
     def test_delete_just_created_user(self):
         register_url = "/user/"
         login_url = "/user/login"
@@ -62,6 +71,8 @@ class TestUserDelete(BaseCase):
         Assertions.assert_code_status(response3, 404)
         assert response3.content.decode("UTF-8") == 'User not found'
 
+    @allure.title("Unsuccessful deleting with different user authorization")
+    @allure.description("This test doesn't delete user with different user authorization")
     def test_delete_another_user(self):
         register_url = "/user/"
         login_url = "/user/login"
