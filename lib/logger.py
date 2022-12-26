@@ -5,7 +5,7 @@ from requests import Response
 
 
 class Logger:
-    file_name = f"logs/log_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
+    file_name = f"logs\log_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
 
     # Классметод позволяет обращаться к переменным класса через "cls"
     @classmethod
